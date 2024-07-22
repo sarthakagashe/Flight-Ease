@@ -1,0 +1,74 @@
+{% extends 'authentication/base.html' %}
+{% load static %}
+
+{% block title %}Passenger Details{% endblock %}
+
+{% block additional_css %}
+    <link href="http://cdn.kendostatic.com/2012.3.1114/styles/kendo.common.min.css" rel="stylesheet" type="text/css" />
+    <link href="http://cdn.kendostatic.com/2012.3.1114/styles/kendo.default.min.css" rel="stylesheet" type="text/css" />
+    <script src="http://code.jquery.com/jquery-1.8.2.min.js"></script>
+    <script src="http://cdn.kendostatic.com/2012.3.1114/js/kendo.all.min.js"></script>
+
+    <!-- Additional CSS styles -->
+    <style>
+        /* Add any additional styles for the page */
+       
+        #passengerGrid {
+            margin-top: 20px;
+        }
+    </style>
+ {% endblock %}
+ {% block content %}
+    <h2 style="margin-top: 5%;
+    margin-bottom: 30px;
+    margin-left: 15px;
+    color: #302c2b;">Passenger Details</h2>
+    <!-- Empty div for Kendo Grid -->
+    <div id="passengerGrid"  style="margin-left: 15px; margin-right: 15px;"></div>
+
+    <!-- JavaScript code for Kendo Grid -->
+    <script>
+        $(document).ready(function() {
+            var grid = $("#passengerGrid").kendoGrid({
+                dataSource: {
+                    transport: {
+                        read: {
+                            url: "/passenger_details/{{ booking_id }}/",
+                            dataType: "json"
+                        }
+                    },
+                    schema: {
+                        model: {
+                            fields: {
+                                first_name: { type: "string" },
+                                last_name: { type: "string" },
+                                age: { type: "number" },
+                                gender: { type: "string" },
+                                phone_number: { type: "string" }
+                            }
+                        }
+                    },
+                    pageSize: 10
+                },
+                sortable: true,
+                pageable: true,
+                columns: [
+                    { title: "S.No.", width: 70 },
+                    { field: "first_name", title: "First Name" },
+                    { field: "last_name", title: "Last Name" },
+                    { field: "age", title: "Age" },
+                    { field: "gender", title: "Gender" },
+                    { field: "phone_number", title: "Phone Number" }
+                ],
+                dataBound: function() {
+                    var grid = this;
+                    grid.tbody.find("tr").each(function (index) {
+                        var row = $(this);
+                        var dataItem = grid.dataItem(row);
+                        row.find("td:first").text(index + 1);
+                    });
+                }
+            });
+        });
+    </script>
+{% endblock %}

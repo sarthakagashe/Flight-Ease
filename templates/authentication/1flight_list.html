@@ -1,0 +1,204 @@
+{% extends 'authentication/base.html' %}
+{% load static %}
+
+{% block title %}Filtered Flights{% endblock %}
+
+{% block additional_css %}
+<link rel="stylesheet" href="https://kendo.cdn.telerik.com/2021.3.1207/styles/kendo.default.min.css">
+<link rel="stylesheet" href="https://kendo.cdn.telerik.com/2021.3.1207/styles/kendo.default.mobile.min.css">
+
+
+<style>
+     body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4;
+        color: #333;
+    }
+    h2 {
+        margin-top: 20px;
+        margin-bottom: 30px;
+        color: #007bff;
+    }
+    .kendo-grid {
+        border: 1px solid #ccc;
+        background-color: #fff;
+        border-radius: 5px;
+    }
+    .kendo-grid-header {
+        background-color: #f8f9fa;
+    }
+    .kendo-grid-header .k-header {
+        font-weight: bold;
+        text-align: center;
+    }
+    .kendo-grid td, .kendo-grid th {
+        padding: 10px;
+        text-align: center;
+        border: 1px solid #ccc;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .kendo-cancel-btn, .kendo-book-btn {
+        padding: 5px 10px;
+        border: none;
+        background-color: #007bff;
+        color: #fff;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+    .kendo-cancel-btn:hover, .kendo-book-btn:hover {
+        background-color: #0056b3;
+    }
+    .pagination {
+        margin-top: 20px;
+        text-align: center;
+    }
+    .pagination a {
+        padding: 8px 12px;
+        margin: 0 5px;
+        background-color: #007bff;
+        color: #fff;
+        border-radius: 4px;
+        text-decoration: none;
+        transition: background-color 0.3s;
+    }
+    .pagination a:hover {
+        background-color: #0056b3;
+    }
+    .current {
+        font-weight: bold;
+    }
+    .k-grid-filter-row {
+        background-color: #f8f9fa;
+    }
+    .k-grid-filter-row .k-filtercell {
+        padding: 8px;
+    }
+    .k-grid-filter-row input, .k-grid-filter-row select {
+        width: 100%;
+        padding: 6px;
+        box-sizing: border-box;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>Filtered Flights</h2>
+
+    {% if flights %}
+        <div id="grid"></div>
+    {% else %}
+        <p>No flights found.</p>
+    {% endif %}
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- Kendo UI scripts -->
+<script src="https://kendo.cdn.telerik.com/2021.3.1207/js/kendo.all.min.js"></script>
+<script>
+    $(document).ready(function () {
+        var grid = $("#grid").kendoGrid({
+            dataSource: {
+            transport: {
+                read: {
+                    url: "/fetch_filtered_flights/",
+                    dataType: "json"
+                }
+            },
+            schema: {
+                model: {
+                    fields: {
+                        flight_number: { type: "string" },
+                        airlines_name: { type: "string" },
+                        source: { type: "string" },
+                        destination: { type: "string" },
+                        departure_time: { type: "date" },
+                        arrival_time: { type: "date" },
+                        fare: { type: "number" },
+                        available_seats: { type: "number" },
+                        flight_id: { type: "string" },
+                        logo_path: { type: "string" },
+                        delay: { type: "number" },
+                        estimated_departure_time: {type: "date"},
+                        estimated_arrival_time: {type: "date"},
+                        distance: { type: "number"}
+                        }
+                }
+            },
+            pageSize: 10,
+        },  width:1600,
+            scrollable: true,
+            groupable: true,
+            sortable: true,
+            pageable: {
+                refresh: true,
+                pageSizes: true,
+                buttonCount: 5
+            },
+            filterable: {
+                mode: "row"
+            },
+            columns: [
+                { field: "flight_number", title: "Flight Number", width: "150px", filterable: false, sortable: false },
+                { field: "airlines_name", title: "Airlines Name", width: "210px", filterable: { cell: { operator: "contains" ,showOperators: false} } },
+                // { field: "logo_path", title: "Airlines Logo", template: "<img src='#= logo_path #' alt='#= airlines_name #' width='50' height='50'>", width: "150px", filterable: false, sortable: false },
+                {   field: "logo_path", 
+                    title: "Airlines Logo", 
+                    template: "<img src='{% static 'media/'%}#= airlines_name #_logo.png' alt='#= airlines_name #' width='50' height='50'>", 
+                    width: "150px",
+                    sortable : false,
+                    filterable: false },
+                { field: "source", title: "Source", width: "140px", filterable: false, sortable: false },
+                { field: "destination", title: "Destination", width: "100px", filterable: false, sortable: false },
+                { field: "departure_time", title: "Departure Time", format: "{0:yyyy-MM-dd HH:mm:ss}", width: "150px", filterable:false},
+                { field: "arrival_time", title: "Arrival Time", format: "{0:yyyy-MM-dd HH:mm:ss}", width: "150px", filterable: false },
+                { field: "fare", title: "Fare (in Rs.)", width: "250px", filterable: { cell: { operator: "lt",showOperators: false, suggestionOperator: "Less than" } } },
+                { field: "delay", title: "Delay(Minutes)", width: "190px", filterable: false},
+                { field: "estimated_departure_time", title: "Estd. Departure Time", format: "{0:yyyy-MM-dd HH:mm:ss}", width: "120px", filterable:false},
+                { field: "estimated_arrival_time", title: "Estd. Arrival Time", format: "{0:yyyy-MM-dd HH:mm:ss}", width: "120px", filterable:false},
+                { field: "available_seats", title: "Available Seats", width: "90px", filterable: false },
+                // {field: "distance", title: "Distance", width: "150px", filterable: false},
+                {
+                    title: "Action",
+                    template: "<button class='kendo-book-btn' onclick='bookTicket(\"#= flight_id #\")'>Book</button>",
+                    width: "90px",
+                    filterable: false
+                },
+            ]
+        }).data("kendoGrid");
+        setInterval(function(){
+            grid.dataSource.read();
+            grid.refresh();
+        }, 10000);
+
+    //     function refreshGrid() {
+    //     $.ajax({
+    //         url: "{% url 'fetch_filtered_flights' %}",
+    //         method: "GET",
+    //         success: function (data) {
+    //             console.log(data.flights); // Check received data in browser console
+    //             // Update the dataSource with new data
+    //             dataSource.data(data.flights);
+    //             // Rebind the grid to update the view
+    //             grid.refresh();
+    //         },
+    //         error: function () {
+    //             console.error("Failed to fetch flight data.");
+    //         }
+    //     });
+    // }
+
+    // // Set an interval to refresh the grid every 60 seconds
+    // setInterval(refreshGrid, 6000); // 60000 milliseconds = 1 minute
+    });
+
+    function bookTicket(flightId) {
+        const url = `{% url 'flight_details' 0 %}`.replace('0', flightId);
+        window.location.href = url;
+    }
+</script>
+{% endblock %}

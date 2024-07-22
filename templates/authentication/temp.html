@@ -1,0 +1,101 @@
+{% extends 'authentication/base.html' %}
+{% load static %}
+ 
+{% block additional_css %}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    {% endblock %}
+ 
+    {% block title %}Flight Ease{% endblock %}
+     
+    {% block content %}
+
+    <div class="container-fluid justify-content-center align-items-center pt-5 mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-5 text-center text-md-start">
+                <h1>
+                    <div class="display-6 pb-2">Looking for a flight?</div>
+                    <div class="display-8 text-muted">Book it now!!</div>
+                </h1>
+                <div class="row justify-content-start my-3">
+                    <div class="col-lg-6">
+                        <form action="/search" method="post">
+
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <label for="source" class="form-label mt-2 fw-bold">Source:</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-airplane-fill" viewBox="0 0 16 16">
+                                            <path transform="rotate(60, 8, 8)" d="M6.428 1.151C6.708.591 7.213 0 8 0s1.292.592 1.572 1.151C9.861 1.73 10 2.431 10 3v3.691l5.17 2.585a1.5 1.5 0 0 1 .83 1.342V12a.5.5 0 0 1-.582.493l-5.507-.918-.375 2.253 1.318 1.318A.5.5 0 0 1 10.5 16h-5a.5.5 0 0 1-.354-.854l1.319-1.318-.376-2.253-5.507.918A.5.5 0 0 1 0 12v-1.382a1.5 1.5 0 0 1 .83-1.342L6 6.691V3c0-.568.14-1.271.428-1.849"/>
+                                          </svg>
+                                    </span>
+                                    <input type="text" class="form-control" id ="source" name="source" placeholder="Source" required>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="destination" class="form-label mt-2 fw-bold">Destination:</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-airplane-fill" viewBox="0 0 16 16">
+                                            <path transform="rotate(120, 8, 8)" d="M6.428 1.151C6.708.591 7.213 0 8 0s1.292.592 1.572 1.151C9.861 1.73 10 2.431 10 3v3.691l5.17 2.585a1.5 1.5 0 0 1 .83 1.342V12a.5.5 0 0 1-.582.493l-5.507-.918-.375 2.253 1.318 1.318A.5.5 0 0 1 10.5 16h-5a.5.5 0 0 1-.354-.854l1.319-1.318-.376-2.253-5.507.918A.5.5 0 0 1 0 12v-1.382a1.5 1.5 0 0 1 .83-1.342L6 6.691V3c0-.568.14-1.271.428-1.849"/>
+                                          </svg>                                          
+                                    </span>
+                                    <input type="text" class="form-control" id ="destination" name="destination" placeholder="Destination" required>
+                                </div>
+                            </div>
+                            
+                            <label for="journeyDate" class="form-label mt-2 fw-bold">Date of Journey:</label>
+                            <input type="date" class="form-control mb-1" id ="journeyDate" name="journeyDate" placeholder="Date of Journey" required>
+
+                            <label for="Passengers" class="form-label mt-2 fw-bold">Passengers:</label>
+                            <select class = "form-select mb-1 "  id="counter" name="counter">
+                                <option value="" disabled selected>Number of Passengers</option>
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                                <option value="5">5</option>
+                                <option value="6">6</option>
+                                <option value="7">7</option>
+                                <option value="8">8</option>
+                                <option value="9">9</option>
+                                <option value="10">10</option>
+                            </select>
+
+                            <label for="Departure Preference" class="form-label mt-2 fw-bold">Departure Preference:</label>
+                            <select class = "form-select mb-1" id="departureTime" name="departureTime" >
+                                <option value="no"  selected>Departure Time</option>
+                                <option value="night">12 am - 6 am</option>
+                                <option value="morning">6 am - 12 pm</option>
+                                <option value="afternoon">12 pm - 6 pm</option>
+                                <option value="evening">6 pm - 12 am</option>
+                            </select>
+
+                            <label for="Arrival Preference" class="form-label mt-2 fw-bold">Arrival Preference:</label>
+                            <select class = "form-select mb-1" id="arrivalTime" name="arrivaltime" >
+                                <option value="no"  selected>Arrival Time</option>
+                                <option value="night">12 am - 6 am</option>
+                                <option value="morning">6 am - 12 pm</option>
+                                <option value="afternoon">12 pm - 6 pm</option>
+                                <option value="evening">6 pm - 12 am</option>
+                            </select>
+                            <br>
+                            <div class="mb-4 text-center">
+                                <button class="btn btn-secondary"  type="submit">Search</button>
+                            </div>
+
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-5 text-center">
+                <img alt="flight-image" class="img-fluid" src="{% static 'media/flight_4.jpg' %}">
+            </div>
+        </div>
+    </div>
+    
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"></script>
+    {% endblock %}

@@ -1,0 +1,85 @@
+/* Container styles */
+
+
+.container {
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+ 
+/* Flight details styles */
+.flight-details {
+    margin-bottom: 20px;
+}
+ 
+.flight-details h2 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    font-size: 1.5em;
+}
+ 
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+ 
+th, td {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+ 
+th {
+    background-color: #f2f2f2;
+    text-align: left;
+}
+ 
+/* Passenger details styles */
+.passenger-details {
+    margin-bottom: 20px;
+}
+ 
+.passenger-details h1 {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 0;
+    margin-bottom: 10px;
+    font-size: 1.5em;
+}
+ 
+.passenger {
+    margin-bottom: 20px; /* Add space between individual passengers */
+    border-bottom: 1px solid #ccc; /* Add a border between individual passengers */
+    padding-bottom: 20px; /* Add some space below each passenger */
+}
+ 
+.passenger label {
+    display: block;
+    margin-bottom: 5px;
+}
+ 
+.passenger input, .passenger select {
+    margin-bottom: 10px;
+    padding: 8px;
+    width: 100%;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+ 
+/* Book flight button styles */
+#book-flight {
+    padding: 10px 20px;
+    font-size: 16px;
+    color: #fff;
+    background-color: #007bff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+ 
+#book-flight:hover {
+    background-color: #0056b3;
+}

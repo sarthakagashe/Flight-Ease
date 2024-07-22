@@ -1,0 +1,185 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f8f8f8;
+    margin: 0;
+    padding: 0;
+}
+
+.header-random {
+    background-color: #fff;
+    padding: 15px 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo-random {
+    font-size: 24px;
+    font-weight: bold;
+    color: #e64a19;
+}
+
+nav-random ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+}
+
+nav-random ul li {
+    margin-left: 20px;
+}
+
+nav-random ul li a {
+    text-decoration: none;
+    color: #333;
+    font-weight: bold;
+}
+
+nav-random ul li a.active-random {
+    color: #e64a19;
+}
+
+.container-random {
+    max-width: 800px;
+    margin: 20px auto;
+    background-color: #fff;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+}
+
+h2 {
+    margin: 0 0 20px;
+}
+
+.booking-random {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    background-color: #fff;
+}
+
+.date-random {
+    text-align: center;
+    margin-right: 20px;
+}
+
+.date-random .day-random {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.date-random .month-random, .date-random .year-random {
+    font-size: 14px;
+    color: #888;
+}
+
+.details-random {
+    flex: 1;
+    margin-right: 20px;
+}
+
+.route-random {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.flight-info-random, .booking-info-random {
+    font-size: 14px;
+    color: #888;
+}
+
+.status-random {
+    text-align: right;
+}
+
+.status-confirmed-random {
+    display: block;
+    background-color: #28a745;
+    color: #fff;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    margin-bottom: 5px;
+}
+
+.flight-number-random {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.actions-random {
+    text-align: right;
+}
+
+ .cancel-btn-random {
+    background-color: #f8f8f8;
+    color: #333;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 5px 10px;
+    cursor: pointer;
+    font-size: 14px;
+    margin-top: 5px;
+}
+
+.print-btn-random{
+    background-color: #ffffff;
+    color: #ffffff;
+    border: 1px solid #ffffff;
+    border-radius: 1px;
+    padding: 5px 10px;
+    cursor: pointer;
+    font-size: 6px;
+    margin-top: 14px;
+}
+
+.print-btn-random:hover, .cancel-btn-random:hover {
+    background-color: #eee;
+}
+
+.cancel-btn-random {
+    color: #e64a19;
+    border-color: #e64a19;
+}
+
+.pagination {
+    margin-top: 20px;
+    align-items: center;
+}
+
+.pagination-link {
+    padding: 5px 10px;
+    border: 1px solid #ccc;
+    background-color: #f2f2f2;
+    color: #333;
+    text-decoration: none;
+    border-radius: 5px;
+    margin-right: 5px;
+}
+
+.pagination-link:hover {
+    background-color: #e2e2e2;
+}
+
+/* Add styles for cancelled status */
+.cancelled-status {
+    background-color: #ffcccc; /* Light red background */
+    color: #cc0000; /* Dark red text color */
+}
+
+/* Style disabled buttons */
+
+.actions-random .cancel-btn-random[disabled] {
+    background-color: #ccc; /* Grey background */
+    color: #999; /* Light grey text color */
+    cursor: not-allowed; /* Show not-allowed cursor on hover */
+    border-color: #ffffff;
+
+}

@@ -1,0 +1,78 @@
+{% extends 'authentication/base.html' %}
+
+{%load static%}
+
+{% block additional_css %}
+    <link rel="stylesheet" href="{% static 'css/temp.css' %}">
+{% endblock %}
+
+{% block content %}
+    <div class="outer-container">
+        <div class="item-flight-image">
+            <img src="https://i.pinimg.com/originals/6e/fd/41/6efd410d250fcd1ecafb04ab1ac61a6c.jpg" class="img-fit">
+        </div>
+        <div class="item-details">
+            <form action="/search" method="post">
+                {% csrf_token %}
+                <div class="container-search">
+                    <div class="item-heading">
+                        <h2>SEARCH A FLIGHT</h2>
+                    </div>
+                    <div class="item-src">
+                        <h4>From :</h4>
+                        <input type="text" id="source" name="source" placeholder="Source" required>
+                    </div>
+                    <div class="item-dest">
+                        <h4>To :</h4>
+                        <input type="text" id="destination" name="destination" placeholder="Destination" required>
+                    </div>
+                    <div class="item-date">
+                        <h4>Date of Journey :</h4>
+                        <input type="date" id="journeyDate" name="journeyDate" placeholder="Day of Journey" required>
+                    </div>
+                    <div class="item-pass-cnt">
+                        <h4>Number of Passengers :</h4>
+                        <select id="counter" name="counter">
+                            <option value="" disabled selected>Number of Passengers</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                            <option value="6">6</option>
+                            <option value="7">7</option>
+                            <option value="8">8</option>
+                            <option value="9">9</option>
+                            <option value="10">10</option>
+                        </select>
+                    </div>
+                    <div class="item-arr-pref">
+                        <h4>Arrival Preference :</h4>
+                        <select id="arrivalTime" name="arrivaltime" >
+                            <option value="no"  selected>Arrival Time</option>
+                            <option value="night">12 am - 6 am</option>
+                            <option value="morning">6 am - 12 pm</option>
+                            <option value="afternoon">12 pm - 6 pm</option>
+                            <option value="evening">6 pm - 12 am</option>
+                        </select>
+                    </div>
+                    <div class="item-dept-pref">
+                        <h4>Departure Preference :</h4>
+                        <select id="departureTime" name="departureTime" >
+                            <option value="no"  selected>Departure Time</option>
+                            <option value="night">12 am - 6 am</option>
+                            <option value="morning">6 am - 12 pm</option>
+                            <option value="afternoon">12 pm - 6 pm</option>
+                            <option value="evening">6 pm - 12 am</option>
+                        </select>
+                    </div>
+                    <div class="item-searc-press">
+                        <button type="submit">Search Flight</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        
+    </div>
+
+{% endblock %}

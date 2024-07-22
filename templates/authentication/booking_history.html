@@ -1,0 +1,249 @@
+
+{% extends 'authentication/base.html' %}
+{% load static %}
+
+{% block title %}Filtered Flights{% endblock %}
+
+{% block additional_css %}
+	<link href="http://cdn.kendostatic.com/2012.3.1114/styles/kendo.common.min.css" rel="stylesheet" type="text/css" />
+	<link href="http://cdn.kendostatic.com/2012.3.1114/styles/kendo.default.min.css" rel="stylesheet" type="text/css" />
+	<script src="http://code.jquery.com/jquery-1.8.2.min.js"></script>
+	<script src="http://cdn.kendostatic.com/2012.3.1114/js/kendo.all.min.js"></script>
+	<script src="http://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.2/jquery.cookie.js"></script>  
+    <style>
+    .kenda-cancel-btn {
+        padding: 5px 10px;
+        border: none;
+        background-color: #dc3545;
+        color: #fff;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+    .kenda-details-btn {
+        padding: 5px 10px;
+        border: none;
+        background-color: #4035dc;
+        color: #fff;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+    .kenda-cancel-btn:hover {
+        background-color: #c82333;
+    }
+    .kenda-cancel-btn[disabled] {
+    background-color: #ccc; /* Grey background */
+    color: #999; /* Light grey text color */
+    cursor: not-allowed; /* Show not-allowed cursor on hover */
+    border-color: #ffffff;
+
+    }
+
+    .clear-filters-btn {
+            padding: 5px 10px;
+            border: none;
+            background-color: #007bff;
+            color: #fff;
+            border-radius: 3px;
+            cursor: pointer;
+            margin-bottom: 10px;
+            margin-left: 15px;
+        }
+    .clear-filters-btn:hover {
+            background-color: #0056b3;
+        }
+
+    </style>
+    
+    {% endblock %}
+    {% block content %}
+    <h2 style="margin-top: 5%;
+    margin-bottom: 30px;
+    margin-left: 15px;
+    color: #302c2b;">Booking History</h2>
+    
+    <button class="clear-filters-btn" onclick="clearFilters()">Clear All Filters</button>
+
+    <br>
+    <br>
+
+<div id="grid" style="margin-left: 15px; margin-right: 15px;"></div>
+<script>
+	
+	  $(document).ready(function() {
+			var grid = $("#grid").kendoGrid({
+				dataSource: {
+            transport: {
+                read: {
+                    url: "/get_booking_details/",
+                    dataType: "json"
+                }
+            },
+            schema: {
+                model: {
+                    fields: {
+                        flight_number: { type: "string" },
+                        airlines_name: { type: "string" },
+                        source: { type: "string" },
+                        destination: { type: "string" },
+                        arrival_date: { type: "date" },
+                        arrival_time: { type: "date" },
+                        departure_date: { type: "date" },
+                        departure_time: { type: "date" },
+                        fare: { type: "number" },
+                        delay: { type: "number" },
+                        booking_time: { type: "date" },
+                        status: { type: "string" },
+                        booking_id: { type: "string" },
+                        logo_path: { type: "string" },
+                        passengers: {type : "number"},
+                        estimated_departure_time: {type : "date"},
+                        estimated_arrival_time: {type : "date"},
+                        distance_left: {type: "number"},
+                    }
+                }
+            },
+            pageSize: 10,
+				},				
+				autoBind: false,				
+				sortable: true,
+				groupable: true,
+				filterable: true,
+                selectable: "rows",
+				dataBound: function(e){
+                    var grid = this;
+					var dataSource = this.dataSource;
+                    
+					var state = kendo.stringify({
+						page: dataSource.page(),
+						pageSize: dataSource.pageSize(),
+						sort: dataSource.sort(),
+						group: dataSource.group(),
+						filter: dataSource.filter()
+					});
+                    
+					$.cookie("bookingsState",state);
+                    if($.cookie('bookingRows')){
+                        $.each(JSON.parse($.cookie('bookingRows')),function(){                        
+                            var item = dataSource.get(this);
+                            var row = grid.tbody.find('[data-uid='+item.uid+']');
+                            row.addClass('k-state-selected');
+                        })
+                    }
+				},
+                change:function(){
+                    var grid = this;
+                    var ids = grid.select().map(function(){
+                       return grid.dataItem($(this)).Id
+                    }).toArray();
+                    $.cookie('bookingRows',JSON.stringify(ids));                    
+                },
+				pageable: {
+					input: true,
+					numeric: false
+				},
+				columns: [
+				{ field: "flight_number", title: "Flight Number", width: "120px",filterable: false },
+                { field: "airlines_name", title: "Airlines Name", width: "130px", filterable: { cell: { operator: "contains" ,showOperators: false} } },
+                { 
+                    field: "logo_path", 
+                    title: "Airlines Logo", 
+                    template: "<img src='{% static 'media/'%}#= airlines_name #_logo.png' alt='#= airlines_name #' width='70' height='50'>", 
+                    width: "150px",
+                    sortable : false ,
+                    filterable: false
+                },
+                { field: "source", title: "Source", width: "130px", filterable: { cell: { operator: "contains" ,showOperators: false} } },
+                { field: "destination", title: "Destination", width: "130px", filterable: { cell: { operator: "contains" ,showOperators: false} } },
+                { field: "departure_time", title: "Departure", format: "{0:yyyy-MM-dd HH:mm}", width: "150px", filterable:false},
+                // { field: "departure_time", title: "Departure Time", format: "{0:HH:mm:ss}", width: "130px",filterable: false },
+                { field: "arrival_time", title: "Arrival", format: "{0:yyyy-MM-dd HH:mm}", width: "150px", filterable: false },
+                // { field: "arrival_time", title: "Arrival Time", format: "{0:HH:mm:ss}", width: "130px" ,filterable: false,},
+                
+                { field: "fare", title: "Fare (in Rs.)", width: "120px", filterable: { cell: { operator: "lt",showOperators: true, suggestionOperator: "Less than" } } },
+                { field: "delay", title: "Delay (minutes)", width: "150px" , filterable: { cell: { operator: "lt",showOperators: true, suggestionOperator: "Less than" } }},
+                { field: "estimated_departure_time", title: "Estd. Departure", format: "{0:dd/MM/yyyy HH:mm}", width: "150px", filterable: false },
+                { field: "estimated_arrival_time", title: "Estd. Arrival", format: "{0:dd/MM/yyyy HH:mm}", width: "150px", filterable: false },
+                { field: "passengers", title: "No. of Pass.", width: "100px", filterable: false },
+                { field: "booking_time", title: "Booking Time", format: "{0:dd/MM/yyyy HH:mm}", width: "130px", filterable: false },
+                { field: "status", title: "Status", width: "150px", filterable: { cell: { operator: "contains" ,showOperators: false} } },
+                { field: "distance_left", title: "Miles left", width: "150px", sortable : false, filterable: false},
+                {
+                    title: "Action",
+                    template: "# if (status == 'Pending') { #" +
+                            "<button class='kenda-cancel-btn' onclick='cancelBooking(\"#= booking_id #\", \"#= flight_number #\")'>Cancel</button>"+
+                        "# } else { #"+
+                            "<button class='kenda-cancel-btn' disabled>Cancel</button>"+
+                        "# } #",
+                    width: "150px",
+                    filterable: false
+                },	
+                {
+                    title: "Passenger Details",
+                    template: "<button class='kenda-details-btn' onclick='passengerDetails(\"#= booking_id #\", \"#= flight_number #\")' >Details</button>",
+                    width: "150px",
+                    filterable: false
+                },				
+					
+				]
+			}).data("kendoGrid");
+
+            setInterval(function(){
+            grid.dataSource.read();
+            grid.refresh();
+        }, 30000);
+			
+			var state = JSON.parse($.cookie("bookingsState"));
+			if(state){
+				if(state.filter){
+					parseFilterDates(state.filter, grid.dataSource.options.schema.model.fields);					
+				}
+                grid.dataSource.query(state);
+			}
+			else{
+				grid.dataSource.read();
+			}
+		});
+        
+		function parseFilterDates(filter, fields){
+			if(filter.filters){
+				for(var i = 0; i < filter.filters.length; i++){
+					parseFilterDates(filter.filters[i], fields);
+				}
+			}
+			else{
+				if(fields[filter.field].type == "date"){
+					filter.value = kendo.parseDate(filter.value);
+				}
+			}
+		}
+        function cancelBooking(bookingId, flightNumber) {
+        if (confirm(`Are you sure you want to cancel the booking of flight ${flightNumber}?`)) {
+            fetch(`/cancel_booking/${bookingId}/`)
+                .then(response => {
+                    if (response.ok) {
+                        alert(`Booking for flight ${flightNumber} canceled.`);
+                        $("#grid").data("kendoGrid").dataSource.read(); // Refresh grid data
+                    } else {
+                        alert("An error occurred while canceling the booking.");
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert("An error occurred while canceling the booking.");
+                });
+        }
+    }
+
+    function passengerDetails(bookingId, flightNumber) {
+        const url = `{% url 'render_details_page' 0 %}`.replace('0', bookingId);
+        window.location.href = url;
+        }
+
+    function clearFilters() {
+            var grid = $("#grid").data("kendoGrid");
+            grid.dataSource.filter({});
+            grid.dataSource.sort({});
+        }
+
+</script>
+{% endblock %}

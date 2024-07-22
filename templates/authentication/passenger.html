@@ -1,0 +1,273 @@
+{% extends 'authentication/base.html' %}
+{% load static %}
+ 
+{% block additional_css %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="{% static 'css/passenger.css' %}">
+{% endblock %}
+ 
+{% block title %}Flight Booking{% endblock %}
+ 
+{% block content %}
+<div class="container">
+    <div class="flight-details">
+        <h2 style="margin-top: 5%;
+        margin-bottom: 30px;
+        margin-left: 0px;
+        color: #302c2b;">Flight Details</h2>
+        <table>
+            <tr>
+                <th>Flight Number</th>
+                <th>Logo</th>
+                <th>Airlines Name</th>
+                <th>Source</th>
+                <th>Destination</th>
+                <!-- <th>Departure Time</th>
+                <th>Arrival Time</th>
+                <th>Delay(in minutes)</th> -->
+                <th>Estd. Dept. Time</th>
+                <th>Estd. Arr. Time</th>
+                <th>Fare</th>
+                <th>Available Seats</th>
+            </tr>
+            <tr>
+                <td>{{ flight.flight_number }}</td>
+                <td><img src="{% static 'media/' %}{{ flight.airlines_name|lower }}_logo.png" alt="{{ flight.airlines_name }}" width="70" height="50"></td>
+                <td>{{ flight.airlines_name }}</td>
+                <td>{{ flight.source }}</td>
+                <td>{{ flight.destination }}</td>
+                <!-- <td>{{ flight.departure_time }}</td>
+                <td>{{ flight.arrival_time }}</td>
+                <td>{{ flight.delay }}</td> -->
+                <td>{{ flight.estimated_departure_time }}</td>
+                <td>{{ flight.estimated_arrival_time }}</td>
+                <td>{{ flight.fare }}</td>
+                <td>{{ flight.available_seats }}</td>
+            </tr>
+        </table>
+    </div>
+    <div class="passenger-details">
+        <h1 style="margin-bottom:3%; margin-top: 2%;">Passenger Details</h1>
+        <div id="passenger-form"></div>
+        <label for="num-passengers">Number of Passengers:</label>
+        <input type="number" id="num-passengers" name="num-passengers" min="1" max="10" value="1" required>
+    </div>
+    <button onclick="bookFlight()" , style="padding: 5px 10px;
+    border: none;
+    background-color: #4035dc;
+    color: #fff;
+    border-radius: 5px;
+    cursor: pointer;">Book Flight</button>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    function generatePassengerFields(numPassengers) {
+        var passengerDetails = document.getElementById('passenger-form');
+        passengerDetails.innerHTML = '';
+ 
+        for (var i = 0; i < numPassengers; i++) {
+            var passengerDiv = document.createElement('div');
+            passengerDiv.className = 'passenger mb-3 passenger-container'; // Add Bootstrap margin class and custom class
+            passengerDiv.style.width = '100%'; // Make it fluid
+            passengerDiv.style.maxWidth = '600px'; // Set fixed width
+            passengerDiv.style.height = 'auto'; // Set height
+            passengerDiv.style.padding = '15px'; // Optional padding
+            passengerDiv.style.border = '1px solid #ccc'; // Optional border
+            passengerDiv.style.borderRadius = '5px'; // Optional border radius
+            passengerDiv.style.boxShadow = '0 0 10px rgba(0,0,0,0.1)';
+            // passengerDiv.style.marginBottom = '5%';
+ 
+            var passengerLabel = document.createElement('h4');
+            passengerLabel.textContent = 'Traveller - ' + (i + 1);
+            passengerLabel.className = 'mb-3'; // Add Bootstrap margin class
+            passengerDiv.appendChild(passengerLabel);
+ 
+            var row1 = document.createElement('div');
+            row1.className = 'row mb-3'; // Bootstrap row with margin bottom
+ 
+            var firstNameDiv = document.createElement('div');
+            firstNameDiv.className = 'col-md-6'; // Bootstrap column
+            var firstNameLabel = document.createElement('label');
+            firstNameLabel.textContent = 'First Name:';
+            firstNameLabel.className = 'form-label'; // Bootstrap label class
+            var firstNameInput = document.createElement('input');
+            firstNameInput.type = 'text';
+            firstNameInput.name = 'passenger-first-name-' + (i + 1);
+            firstNameInput.required = true;
+            firstNameInput.className = 'form-control'; // Bootstrap input class
+            firstNameDiv.appendChild(firstNameLabel);
+            firstNameDiv.appendChild(firstNameInput);
+ 
+            var lastNameDiv = document.createElement('div');
+            lastNameDiv.className = 'col-md-6'; // Bootstrap column
+            var lastNameLabel = document.createElement('label');
+            lastNameLabel.textContent = 'Last Name:';
+            lastNameLabel.className = 'form-label'; // Bootstrap label class
+            var lastNameInput = document.createElement('input');
+            lastNameInput.type = 'text';
+            lastNameInput.name = 'passenger-last-name-' + (i + 1);
+            lastNameInput.required = true;
+            lastNameInput.className = 'form-control'; // Bootstrap input class
+            lastNameDiv.appendChild(lastNameLabel);
+            lastNameDiv.appendChild(lastNameInput);
+ 
+            row1.appendChild(firstNameDiv);
+            row1.appendChild(lastNameDiv);
+ 
+            var row2 = document.createElement('div');
+            row2.className = 'row mb-3'; // Bootstrap row with margin bottom
+ 
+            var genderDiv = document.createElement('div');
+            genderDiv.className = 'form-group col-md-6'; // Bootstrap form group
+            var genderLabel = document.createElement('label');
+            genderLabel.textContent = 'Gender:';
+            genderLabel.className = 'form-label'; // Bootstrap label class
+            var genderInput = document.createElement('select');
+            genderInput.name = 'passenger-gender-' + (i + 1);
+            genderInput.required = true;
+            genderInput.className = 'form-select'; // Bootstrap select class
+            var genderOptions = ['Male', 'Female', 'Other'];
+            genderOptions.forEach(function(option) {
+                var optionElement = document.createElement('option');
+                optionElement.textContent = option;
+                optionElement.value = option;
+                genderInput.appendChild(optionElement);
+            });
+            genderDiv.appendChild(genderLabel);
+            genderDiv.appendChild(genderInput);
+ 
+            var ageDiv = document.createElement('div');
+            ageDiv.className = 'col-md-6'; // Bootstrap column
+            var ageLabel = document.createElement('label');
+            ageLabel.textContent = 'Age:';
+            ageLabel.className = 'form-label'; // Bootstrap label class
+            var ageInput = document.createElement('input');
+            ageInput.type = 'number';
+            ageInput.name = 'passenger-age-' + (i + 1);
+            ageInput.min = '1';
+            ageInput.required = true;
+            ageInput.className = 'form-control'; // Bootstrap input class
+            ageDiv.appendChild(ageLabel);
+            ageDiv.appendChild(ageInput);
+ 
+            row2.appendChild(genderDiv);
+            row2.appendChild(ageDiv);
+ 
+            var row3 = document.createElement('div');
+            row3.className = 'row mb-3'; // Bootstrap row with margin bottom
+ 
+            var phoneDiv = document.createElement('div');
+            phoneDiv.className = 'col-md-6'; // Bootstrap column
+            var phoneLabel = document.createElement('label');
+            phoneLabel.textContent = 'Mobile No:';
+            phoneLabel.className = 'form-label'; // Bootstrap label class
+            var phoneInput = document.createElement('input');
+            phoneInput.type = 'tel';
+            phoneInput.name = 'passenger-phone-' + (i + 1);
+            phoneInput.className = 'form-control'; // Bootstrap input class
+            phoneDiv.appendChild(phoneLabel);
+            phoneDiv.appendChild(phoneInput);
+ 
+            row3.appendChild(phoneDiv);
+ 
+            passengerDiv.appendChild(row1);
+            passengerDiv.appendChild(row2);
+            passengerDiv.appendChild(row3);
+ 
+            passengerDetails.appendChild(passengerDiv);
+        }
+    }
+ 
+    var numPassengersInput = document.getElementById('num-passengers');
+    generatePassengerFields(numPassengersInput.value);
+ 
+    numPassengersInput.addEventListener('change', function() {
+        generatePassengerFields(this.value);
+    });
+});
+ 
+ 
+function bookFlight() {
+    var csrftoken = getCookie('csrftoken');
+    var numPassengers = parseInt(document.getElementById('num-passengers').value, 10);
+    var availPass = parseInt("{{ flight.available_seats }}", 10);
+ 
+    if (numPassengers > availPass) {
+        alert("Not enough seats available");
+        return;
+    }
+ 
+    var flightId = "{{ flight.flight_id }}";
+    var passengers = [];
+   
+    for (var i = 0; i < numPassengers; i++) {
+ 
+        var firstName = document.querySelector('input[name="passenger-first-name-' + (i + 1) + '"]').value.trim();
+        var lastName = document.querySelector('input[name="passenger-last-name-' + (i + 1) + '"]').value.trim();
+        var age = document.querySelector('input[name="passenger-age-' + (i + 1) + '"]').value.trim();
+        var gender = document.querySelector('select[name="passenger-gender-' + (i + 1) + '"]').value.trim();
+        var phone = document.querySelector('input[name="passenger-phone-' + (i + 1) + '"]').value.trim();
+ 
+        if (firstName === '' || lastName === '' || age === '' || gender === '' || phone === '') {
+            alert("Please fill in all fields for passenger " + (i + 1));
+            return;
+        }
+        
+        if (phone.length !== 10) {
+            alert("Phone number must be 10 digits long for passenger " + (i + 1));
+            return;
+        }
+
+        passengers.push({
+            first_name: firstName,
+            last_name: lastName,
+            age: age,
+            gender: gender,
+            phone_number: phone
+        });
+    }
+ 
+    $.ajax({
+        type: 'POST',
+        url: '/book-flight/' + flightId + '/',
+        // contentType: 'application/json',
+        // console.log(passengers);
+        data: {
+            num_passengers: numPassengers,
+            flight_id: flightId,
+            passengers: passengers
+        },
+        beforeSend: function(xhr) {
+           
+            console.log(passengers);
+            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+        },
+        success: function(response) {
+            alert("Flight Booked Successfully");
+            window.location.href = response.redirect_url;
+        },
+        error: function(xhr, status, error) {
+            console.error('Error booking flight:', error);
+        }
+    });
+}
+ 
+function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+</script>
+{% endblock %}
+ 
+ 

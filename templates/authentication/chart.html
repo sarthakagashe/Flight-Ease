@@ -1,0 +1,119 @@
+{% extends 'authentication/base.html' %}
+{% load static %}
+
+{% block title %}Booking History{% endblock %}
+
+{% block additional_css %}
+    <style>
+        /* Additional CSS for styling the page */
+        .container {
+            max-width: 800px;
+            margin-top: 7%;
+            padding: 20px;
+            background-color: #f7f7f7;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        /* h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 24px;
+        } */
+
+        #chart {
+            height: 400px; /* Adjust height as needed */
+            margin-top: 20px;
+        }
+
+        /* Styling for Kendo UI Chart tooltip */
+        .k-tooltip {
+            font-size: 14px;
+            background-color: rgba(0, 0, 0, 0.8);
+            color: #fff;
+            border: none;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .k-tooltip-content {
+            padding: 10px;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+
+            #chart {
+                height: 300px;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+<div class="container ">
+    <h2 style="margin-top: 20px;
+    margin-bottom: 30px;
+    color: #302c2b;">Recent Flights</h2>
+    <div id="chart"></div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://kendo.cdn.telerik.com/2021.3.1207/js/kendo.all.min.js"></script>
+<script>
+    $(document).ready(function () {
+        // Function to fetch data and render pie chart
+        function renderPieChart() {
+            $.ajax({
+                url: '/booking_history/generate_chart/',
+                type: 'GET',
+                dataType: 'json',
+                success: function (data) {
+                    // Process the data for the pie chart
+                    var chartData = data.map(function (item) {
+                        return {
+                            category: item.airline,
+                            value: item.count
+                        };
+                    });
+                    
+                    // Render the pie chart
+                    $("#chart").kendoChart({
+                        title: {
+                            text: "Airline Distribution in Recent Bookings"
+                        },
+                        legend: {
+                            position: "bottom"
+                        },
+                        seriesDefaults: {
+                            labels: {
+                                visible: true,
+                                background: "transparent",
+                                template: "#= category #: #= value#"
+                            }
+                        },
+                        series: [{
+                            type: "pie",
+                            data: chartData
+                        }],
+                        tooltip: {
+                            visible: true,
+                            template: "#= category #: #= value#"
+                        }
+                    });
+                },
+                error: function (error) {
+                    console.log(error);
+                    alert('Failed to load data for chart.');
+                }
+            });
+        }
+
+        // Initial render of pie chart
+        renderPieChart();
+    });
+</script>
+{% endblock %}

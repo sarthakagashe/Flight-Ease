@@ -1,0 +1,206 @@
+{% extends 'authentication/base.html' %}
+{% load static %}
+
+{% block title %}Booking History{% endblock %}
+
+{% block additional_css %}
+<link rel="stylesheet" href="{% static 'css/booking_history.css' %}">
+<!-- Kendo UI styles -->
+<link rel="stylesheet" href="https://kendo.cdn.telerik.com/2021.3.1207/styles/kendo.default.min.css">
+<link rel="stylesheet" href="https://kendo.cdn.telerik.com/2021.3.1207/styles/kendo.default.mobile.min.css">
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4;
+        color: #333;
+    }
+    h2 {
+        margin-top: 20px;
+        margin-bottom: 30px;
+        color: #007bff;
+    }
+    .kenda-k-grid {
+        border: 1px solid #ccc;
+        background-color: #fff;
+        border-radius: 5px;
+    }
+    .kenda-k-grid-header {
+        background-color: #f8f9fa;
+    }
+    .kenda-k-grid-header .k-header {
+        font-weight: bold;
+        text-align: center;
+    }
+    .kenda-k-grid td, .kenda-k-grid th {
+        padding: 10px;
+        text-align: center;
+        border: 1px solid #ccc;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    /* .kenda-cancelled .kenda-k-grid-status {
+        color: #dc3545;
+    }
+    .kenda-confirmed .kenda-k-grid-status {
+        color: #28a745;
+    } */
+    .kenda-cancel-btn {
+        padding: 5px 10px;
+        border: none;
+        background-color: #dc3545;
+        color: #fff;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+    .kenda-cancel-btn:hover {
+        background-color: #c82333;
+    }
+
+    .kenda-cancel-btn[disabled] {
+    background-color: #ccc; /* Grey background */
+    color: #999; /* Light grey text color */
+    cursor: not-allowed; /* Show not-allowed cursor on hover */
+    border-color: #ffffff;
+
+    }
+    /* Styling for pagination */
+    .k-pager-numbers {
+        display: none;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>Booking History</h2>
+
+    {% if booking_details %}
+        <div id="grid"></div>
+    {% else %}
+        <p>No bookings found.</p>
+    {% endif %}
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- Kendo UI scripts -->
+<script src="https://kendo.cdn.telerik.com/2021.3.1207/js/kendo.all.min.js"></script>
+<script>
+$(document).ready(function () {
+    var grid = $("#grid").kendoGrid({
+        dataSource: {
+            transport: {
+                read: {
+                    url: "/get_booking_details/",
+                    dataType: "json"
+                }
+            },
+            schema: {
+                model: {
+                    fields: {
+                        flight_number: { type: "string" },
+                        airlines_name: { type: "string" },
+                        source: { type: "string" },
+                        destination: { type: "string" },
+                        arrival_date: { type: "date" },
+                        arrival_time: { type: "date" },
+                        departure_date: { type: "date" },
+                        departure_time: { type: "date" },
+                        fare: { type: "number" },
+                        delay: { type: "number" },
+                        booking_time: { type: "date" },
+                        status: { type: "string" },
+                        booking_id: { type: "string" },
+                        logo_path: { type: "string" },
+                        passengers: {type : "number"},
+                        estimated_departure_time: {type : "date"},
+                        estimated_arrival_time: {type : "date"},
+                        distance_left: {type: "number"},
+                    }
+                }
+            },
+            pageSize: 10,
+        },
+        scrollable: {
+                   virtual: "columns"
+               },
+        width:2500,
+        navigatable: true,
+        filterable: {
+                mode: "row"
+            },
+        // filterable : false,
+        columnMenu: true,
+        scrollable: true,
+        groupable: true,
+        sortable: true,
+        pageable: {
+            refresh: true,
+            pageSizes: true,
+            buttonCount: 5
+        },
+        columns: [
+                { field: "flight_number", title: "Flight Number", width: "150px",filterable: false },
+                { field: "airlines_name", title: "Airlines Name", width: "190px", filterable: { cell: { operator: "contains" ,showOperators: false} } },
+                { 
+                    field: "logo_path", 
+                    title: "Airlines Logo", 
+                    template: "<img src='{% static 'media/'%}#= airlines_name #_logo.png' alt='#= airlines_name #' width='90' height='70'>", 
+                    width: "150px",
+                    sortable : false ,
+                    filterable: false
+                },
+                { field: "source", title: "Source", width: "170px", filterable: { cell: { operator: "contains" ,showOperators: false} } },
+                { field: "destination", title: "Destination", width: "170px", filterable: { cell: { operator: "contains" ,showOperators: false} } },
+                { field: "departure_date", title: "Departure Date", format: "{0:dd/MM/yyyy}", width: "90px",filterable: false },
+                { field: "departure_time", title: "Departure Time", format: "{0:HH:mm:ss}", width: "70px",filterable: false },
+                { field: "arrival_date", title: "Arrival Date", format: "{0:dd/MM/yyyy}", width: "90px",filterable: false },
+                { field: "arrival_time", title: "Arrival Time", format: "{0:HH:mm:ss}", width: "150px" ,filterable: false,},
+                
+                { field: "fare", title: "Fare (in Rs.)", width: "170px", filterable: { cell: { operator: "lt",showOperators: true, suggestionOperator: "Less than" } } },
+                { field: "delay", title: "Delay (minutes)", width: "170px" , filterable: { cell: { operator: "lt",showOperators: true, suggestionOperator: "Less than" } }},
+                { field: "estimated_departure_time", title: "Estd. Departure Time", format: "{0:dd/MM/yyyy HH:mm:ss}", width: "90px", filterable: false },
+                { field: "estimated_arrival_time", title: "Estd. Arrival Time", format: "{0:dd/MM/yyyy HH:mm:ss}", width: "90px", filterable: false },
+                { field: "passengers", title: "No. of Pass.", width: "60px", filterable: false },
+                { field: "booking_time", title: "Booking Time", format: "{0:dd/MM/yyyy HH:mm:ss}", width: "130px", filterable: false },
+                { field: "status", title: "Status", width: "150px", filterable: { cell: { operator: "contains" ,showOperators: false} } },
+                { field: "distance_left", title: "Miles left", width: "150px", sortable : false, filterable: false},
+                {
+                    title: "Action",
+                    template: "# if (status == 'Pending') { #" +
+                            "<button class='kenda-cancel-btn' onclick='cancelBooking(\"#= booking_id #\", \"#= flight_number #\")'>Cancel</button>"+
+                        "# } else { #"+
+                            "<button class='kenda-cancel-btn' disabled>Cancel</button>"+
+                        "# } #",
+                    width: "150px",
+                    filterable: false
+                },
+            ]
+        }).data("kendoGrid");
+
+        setInterval(function(){
+            grid.dataSource.read();
+            grid.refresh();
+        }, 30000); // Refresh every 30 seconds
+    });
+
+    function cancelBooking(bookingId, flightNumber) {
+        if (confirm(`Are you sure you want to cancel the booking of flight ${flightNumber}?`)) {
+            fetch(`/cancel_booking/${bookingId}/`)
+                .then(response => {
+                    if (response.ok) {
+                        alert(`Booking for flight ${flightNumber} canceled.`);
+                        $("#grid").data("kendoGrid").dataSource.read(); // Refresh grid data
+                    } else {
+                        alert("An error occurred while canceling the booking.");
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert("An error occurred while canceling the booking.");
+                });
+        }
+    }
+</script>
+{% endblock %}

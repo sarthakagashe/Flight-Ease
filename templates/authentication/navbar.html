@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <title>>Flight Ease</title>
+    
+</head>
+<body>
+    <nav class="navbar navbar-expand-md navbar-light navbar-dark bg-dark">
+        <div class="container-xxl">
+            <a href="#" onclick="goBack()" class="btn btn-dark">
+                <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="white" class="bi bi-arrow-left" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8"/>
+                </svg>
+            </a>
+            <h2 class="navbar-brand ms-3 mt-1">
+                <span class="fw-bold-text-secondary">
+                    Flight Ease
+                </span>
+            </h2>
+ 
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#main-nav"
+                aria-controls="main-nav" aria-expanded="false" aria-label="Toggle navigation">
+ 
+                <span class="navbar-toggler-icon"></span>
+            </button>
+ 
+            <div class="collapse navbar-collapse justify-content-end align-center" id="main-nav">
+                <ul class="navbar-nav">
+                    <li class="nav-item px-1 mt-1">
+                        <a class="nav-link" href="/book">Search</a>
+                    </li>
+                    <li class="nav-item px-1 mt-1">
+                        <a class="nav-link" href="/booking_history">History</a>
+                    </li>
+                    <li class="nav-item px-1 mt-1">
+                        <a class="nav-link" href="/yearly_graph">Yearly Bookings</a>
+                    </li>
+                    <li class="nav-item px-1 mt-1">
+                        <a class="nav-link" href="/get_chart">Recent Flights</a>
+                    </li>
+                    <li class="mt-1 px-1">
+                        <a href="/profile" class="btn btn-dark">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="white" class="bi bi-person-fill" viewBox="0 0 16 16">
+                                <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6"/>
+                            </svg>
+                        </a>
+                    </li>
+                    <li class="mt-1 px-1">
+                        <a href="/signin" class="btn btn-dark">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="white" class="bi bi-box-arrow-right" viewBox="0 0 16 16">
+                                <path fill-rule="evenodd" d="M10 12.5a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v2a.5.5 0 0 0 1 0v-2A1.5 1.5 0 0 0 9.5 2h-8A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-2a.5.5 0 0 0-1 0z"/>
+                                <path fill-rule="evenodd" d="M15.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708.708L14.293 7.5H5.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708z"/>
+                            </svg>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+ 
+        </div>
+    </nav>
+
+    <div class="content">
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"></script>
+    <script>
+        function goBack() {
+            window.history.back();
+        }
+
+        function generatePieChart() {
+            location.href = '/get_chart'; 
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,165 @@
+{% extends 'authentication/base.html' %}
+{% load static %}
+ 
+{% block title %}Booking History{% endblock %}
+ 
+{% block additional_css %}
+<style>
+    /* Additional CSS for styling the page */
+    .container {
+        max-width: 800px;
+        margin-top: 7%;
+        padding: 20px;
+        background-color: #f7f7f7;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+ 
+    /* h2 {
+        text-align: center;
+        margin-bottom: 20px;
+        font-size: 24px;
+    } */
+ 
+    #chart {
+        height: 400px; /* Adjust height as needed */
+        margin-top: 20px;
+    }
+ 
+    /* Styling for Kendo UI Chart tooltip */
+    .k-tooltip {
+        font-size: 14px;
+        background-color: rgba(0, 0, 0, 0.8);
+        color: #fff;
+        border: none;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+ 
+    .k-tooltip-content {
+        padding: 10px;
+    }
+ 
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        .container {
+            padding: 10px;
+        }
+ 
+        #chart {
+            height: 300px;
+        }
+    }
+</style>
+{% endblock %}
+ 
+{% block content %}
+<div class="container">
+    <h2 style="margin-top: 20px;
+    margin-bottom: 30px;
+    color: #302c2b;">Monthly Flights Record</h2>
+    <div id="chart"></div>
+</div>
+ 
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://kendo.cdn.telerik.com/2021.3.1207/js/kendo.all.min.js"></script>
+<script>
+    $(document).ready(function () {
+        // Function to fetch data and render monthly travelings chart
+        function renderMonthlyTravelingsChart() {
+            $.ajax({
+                url: '/booking_history/generate_graph/',
+                type: 'GET',
+                dataType: 'json',
+                success: function (data) {
+                    // Prepare the data for the chart
+                    var categories = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+                    var completedData = new Array(12).fill(0);
+                    var canceledData = new Array(12).fill(0);
+                    var upcomingData = new Array(12).fill(0);
+                    var inTransitData = new Array(12).fill(0);
+ 
+                    data.completed.forEach(function (item) {
+                        completedData[item.month - 1] = item.count;
+                    });
+ 
+                    data.canceled.forEach(function (item) {
+                        canceledData[item.month - 1] = item.count;
+                    });
+ 
+                    data.upcoming.forEach(function (item) {
+                        upcomingData[item.month - 1] = item.count;
+                    });
+ 
+                    data.in_transit.forEach(function (item) {
+                        inTransitData[item.month - 1] = item.count;
+                    });
+ 
+                    // Render the chart
+                    $("#chart").kendoChart({
+                        // title: {
+                        //     text: "Monthly Flights Traveled"
+                        // },
+                        legend: {
+                            position: "bottom"
+                        },
+                        seriesDefaults: {
+                            type: "column",
+                            labels: {
+                                visible: true,
+                                background: "transparent",
+                                template: "#= value#"
+                            }
+                        },
+                        series: [
+                            {
+                                name: "Completed Flights",
+                                data: completedData,
+                                color: "#4CAF50"  // Green
+                            },
+                            {
+                                name: "Canceled Flights",
+                                data: canceledData,
+                                color: "#F44336"  // Red
+                            },
+                            {
+                                name: "Upcoming Flights",
+                                data: upcomingData,
+                                color: "#2196F3"  // Blue
+                            },
+                            {
+                                name: "In Transit Flights",
+                                data: inTransitData,
+                                color: "#FFEB3B"  // Yellow
+                            }
+                        ],
+                        categoryAxis: {
+                            categories: categories,
+                            majorGridLines: {
+                                visible: false
+                            }
+                        },
+                        valueAxis: {
+                            title: {
+                                text: "Number of Flights"
+                            },
+                            majorUnit: 10
+                        },
+                        tooltip: {
+                            visible: true,
+                            template: "#= series.name #: #= value#"
+                        }
+                    });
+                },
+                error: function (error) {
+                    console.log(error);
+                    alert('Failed to load data for chart.');
+                }
+            });
+        }
+ 
+        // Initial render of monthly travelings chart
+        renderMonthlyTravelingsChart();
+    });
+</script>
+{% endblock %}

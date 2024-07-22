@@ -1,0 +1,52 @@
+<!-- book.html -->
+{% extends "authentication/base.html" %}
+{% load static %}
+
+{% block title %}Home - Journey Planner{% endblock %}
+
+{% block additional_css %}
+    <link rel="stylesheet" href="{% static 'css/book.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="header">
+        <h2>Search your flight</h2>
+        <button onclick="location.href = '/booking_history'">View History</button>
+    </div>
+    <form action="/search" method="post">
+        {% csrf_token %}
+        <input type="text" id="source" name="source" placeholder="Source" required>
+        <input type="text" id="destination" name="destination" placeholder="Destination" required>
+        <input type="date" id="journeyDate" name="journeyDate" placeholder="Day of Journey" required>
+        <select id="departureTime" name="departureTime" required>
+            <option value="" disabled selected>Departure Time</option>
+            <option value="night">12 am - 6 am</option>
+            <option value="morning">6 am - 12 pm</option>
+            <option value="afternoon">12 pm - 6 pm</option>
+            <option value="evening">6 pm - 12 am</option>
+        </select>
+        <select id="counter" name="counter">
+            <option value="" disabled selected>Number of Passengers</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
+            <option value="9">9</option>
+            <option value="10">10</option>
+        </select>
+        <select id="arrivalTime" name="arrivaltime" required>
+            <option value="" disabled selected>Arrival Time</option>
+            <option value="night">12 am - 6 am</option>
+            <option value="morning">6 am - 12 pm</option>
+            <option value="afternoon">12 pm - 6 pm</option>
+            <option value="evening">6 pm - 12 am</option>
+        </select>
+        <button type="submit" name ="Search" >Search</button>
+    </form>
+</div>
+{% endblock %}
